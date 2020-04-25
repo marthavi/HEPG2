@@ -1,0 +1,497 @@
+---
+title: "Supervised methods for HEPG2"
+author: "Martha Zuluaga"
+date: "2/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+# 1. Environment
+```{r environ, echo=TRUE, message=FALSE, warning=FALSE}
+#2. Add libraries 
+library(timeSeries)
+library(reshape2)
+library(cluster)
+library(gplots)
+library(ggfortify)
+library(ggplot2)
+library(tidyverse)
+library(base)
+library(graphics)
+library(stats)
+library(fBasics)
+library(pvclust)
+library(randomForest)
+library(varSelRF)
+```
+
+
+# 2. loading the data 
+First I call the data already transformed and scaled
+```{r}
+# all features
+
+Aldrin.all <- read.csv("07,1 - Aldrin Todos cd normalizado2.csv")
+DDT.all <- read.csv("07,1 - DDT Todos cd normalizado2.csv")
+Endosulfan.all <- read.csv("07,1 - Endosulfan Todos cd normalizado2.csv")
+Lindane.all <- read.csv("07,1 - Lindano Todos cd normalizado2.csv")
+Mix.all <- read.csv("07,1 - Mezcla Todos cd normalizado2.csv")
+
+# Unknown  features
+Aldrin.u <- read.csv("07,2 -  Aldrin descononocidos cd normalizado2.csv")
+DDT.u <- read.csv("07,2 -  DDT descononocidos cd normalizado2.csv")
+Endosulfan.u <- read.csv("07,2 -  Endosulfan descononocidos cd normalizado2.csv")
+Lindane.u <- read.csv("07,2 -  Lindano descononocidos cd normalizado2.csv")
+Mix.u <- read.csv("07,2 -  Mezcla descononocidos cd normalizado2.csv")
+
+# Identified metabolites
+Aldrin.i <- read.csv("07,3 - Aldrin cononocidos cd normalizado2.csv")
+DDT.i <- read.csv("07,3 - DDT cononocidos cd normalizado2.csv")
+Endosulfan.i <- read.csv("07,3 - Endosulfan cononocidos cd normalizado2.csv")
+Lindane.i <- read.csv("07,3 - Lindano cononocidos cd normalizado2.csv")
+Mix.i <- read.csv("07,3 - Aldrin cononocidos cd normalizado2.csv")
+```
+
+# Class prediction: Random forest(supervised) Aldrin.all
+
+```{r}
+set.seed(42)
+Aldrin.a <- Aldrin.all[,-1]
+Aldrin.RF <- randomForest(x = Aldrin.a, y = Aldrin.all[, 1], ntree = 100, mtry = 300, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Aldrin.a,Aldrin.all[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Aldrin.RF)
+```
+
+```{r}
+varImpPlot(Aldrin.RF, sort = TRUE)
+```
+##################################
+
+# Class prediction: Random forest(supervised). DDT.all
+
+```{r}
+set.seed(142)
+DDT.a <- DDT.all[,-1]
+DDT.RF <- randomForest(x = DDT.a, y = DDT.all[, 1], ntree = 100, mtry = 300, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(DDT.a,DDT.all[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(DDT.RF)
+```
+
+```{r}
+varImpPlot(DDT.RF, sort = TRUE)
+```
+
+
+###################################################################################################
+
+# Class prediction: Random forest(supervised). Endosulfan
+
+```{r}
+set.seed(42)
+Endosulfan.a <- Endosulfan.all[,-1]
+Endosulfan.RF <- randomForest(x = Endosulfan.a, y = Endosulfan.all[, 1], ntree = 100, mtry = 300, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Endosulfan.a,Endosulfan.all[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Endosulfan.RF)
+```
+
+```{r}
+varImpPlot(Endosulfan.RF, sort = TRUE)
+```
+
+
+######################################################################################################
+
+
+# Class prediction: Random forest(supervised). Lindane
+
+```{r}
+set.seed(42)
+Lindane.a <- Lindane.all[,-1]
+Lindane.RF <- randomForest(x = Lindane.a, y = Lindane.all[, 1], ntree = 100, mtry = 300, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Lindane.a, Lindane.all[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Lindane.RF)
+```
+
+```{r}
+varImpPlot(Lindane.RF, sort = TRUE)
+```
+
+
+#########################################################################################################
+
+
+# Class prediction: Random forest(supervised). Mixture
+
+```{r}
+set.seed(42)
+Mix.a <- Mix.all[,-1]
+Mix.RF <- randomForest(x = Mix.a, y = Mix.all[, 1], ntree = 100, mtry = 300, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Mix.a, Mix.all[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Mix.RF)
+```
+
+```{r}
+varImpPlot(Mix.RF, sort = TRUE)
+```
+
+
+########################################################################################################################################################################################################################
+
+
+
+# Class prediction: Random forest(supervised) Unknown
+
+```{r}
+set.seed(42)
+Aldrin.un <- Aldrin.u[,-1]
+Aldrin.RF.un <- randomForest(x = Aldrin.un, y = Aldrin.u[, 1], ntree = 100, mtry = 200, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Aldrin.un,Aldrin.u[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Aldrin.RF.un)
+```
+
+```{r}
+varImpPlot(Aldrin.RF.un, sort = TRUE)
+```
+
+
+##########################################################################################################
+
+# Class prediction: Random forest(supervised) Unknown
+
+```{r}
+set.seed(42)
+DDT.un <- DDT.u[,-1]
+DDT.RF.un <- randomForest(x = DDT.un, y = DDT.u[, 1], ntree = 100, mtry = 200, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(DDT.un, DDT.u[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(DDT.RF.un)
+```
+
+```{r}
+varImpPlot(DDT.RF.un, sort = TRUE)
+```
+
+#############################################
+
+# Class prediction: Random forest(supervised) Unknown
+
+```{r}
+set.seed(42)
+Endosulfan.un <- Endosulfan.u[,-1]
+Endosulfan.RF.un <- randomForest(x = Endosulfan.un, y = Endosulfan.u[, 1], ntree = 100, mtry = 200, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Endosulfan.un, Endosulfan.u[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Endosulfan.RF.un)
+```
+
+```{r}
+varImpPlot(Endosulfan.RF.un, sort = TRUE)
+```
+
+
+################################################
+
+
+# Class prediction: Random forest(supervised) Unknown
+
+```{r}
+set.seed(42)
+Lindane.un <- Lindane.u[,-1]
+Lindane.RF.un <- randomForest(x = Lindane.un, y = Lindane.u[, 1], ntree = 100, mtry = 200, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Lindane.un, Lindane.u[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Lindane.RF.un)
+```
+
+```{r}
+varImpPlot(Lindane.RF.un, sort = TRUE)
+```
+
+#########################################################################
+
+
+# Class prediction: Random forest(supervised) Unknown
+
+```{r}
+set.seed(42)
+Mix.un <- Mix.u[,-1]
+Mix.RF.un <- randomForest(x = Mix.un, y = Mix.u[, 1], ntree = 100, mtry = 200, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Mix.un, Mix.u[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Mix.RF.un)
+```
+
+```{r}
+varImpPlot(Mix.RF.un, sort = TRUE)
+```
+
+##################################
+##################################
+##################################
+
+
+# Class prediction: Random forest(supervised) identified
+
+```{r}
+#set.seed(100)
+Aldrin.id <- Aldrin.i[,-1]
+Aldrin.RF.id <- randomForest(x = Aldrin.id, y = Aldrin.i[, 1], ntree = 100, mtry = 100, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Aldrin.id, Aldrin.i[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Aldrin.RF.id)
+```
+
+```{r}
+VIP.Aldrin <- varImpPlot(Aldrin.RF.id, sort = TRUE, 10)
+write.csv(VIP.Aldrin)
+```
+
+###################################################
+
+
+
+```{r}
+set.seed(42)
+DDT.id <- DDT.i[,-1]
+DDT.RF.id <- randomForest(x =DDT.id, y = DDT.i[, 1], ntree = 100, mtry = 100, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(DDT.id, DDT.i[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(DDT.RF.id)
+```
+
+```{r}
+varImpPlot(DDT.RF.id, sort = TRUE)
+```
+
+##########################################
+
+
+
+```{r}
+set.seed(42)
+Endosulfan.id <- Endosulfan.i[,-1]
+Endosulfan.RF.id <- randomForest(x = Endosulfan.id, y = Endosulfan.i[, 1], ntree = 100, mtry = 100, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Endosulfan.id, Endosulfan.i[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Endosulfan.RF.id)
+```
+
+```{r}
+varImpPlot(Endosulfan.RF.id, sort = TRUE)
+```
+
+#########################################
+
+
+
+```{r}
+set.seed(42)
+Lindane.id <- Lindane.i[,-1]
+Lindane.RF.id <- randomForest(x = Lindane.id, y = Lindane.i[, 1], ntree = 100, mtry = 100, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Lindane.id, Lindane.i[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Lindane.RF.id)
+```
+
+```{r}
+varImpPlot(Lindane.RF.id, sort = TRUE)
+```
+
+###############################
+
+
+
+```{r}
+set.seed(42)
+Mix.id <- Mix.i[,-1]
+Mix.RF.id <- randomForest(x = Mix.id, y = Mix.i[, 1], ntree = 100, mtry = 100, 
+                     importance = TRUE)
+
+```
+
+Variable selection procedure
+```{r}
+SelMET<-varSelRF(Mix.id, Mix.i[,1], mtryFactor = 2 )
+SelMET
+```
+
+#plots of the random forest
+What feature will allow me to split the observations at hand in a way that the resulting groups are as different from each other as possible (and the members of each resulting subgroup are as similar to each other as possible)?
+```{r}
+plot(Mix.RF.id)
+```
+
+```{r}
+varImpPlot(Mix.RF.id, sort = TRUE)
+a <- varImpPlot(Mix.RF.id, sort = TRUE)
+```
+
+```{r}
+write.csv(a, "VIP_Mix.csv")
+```
+
