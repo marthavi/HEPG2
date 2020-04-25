@@ -28,6 +28,7 @@ library(fBasics)
 library(pvclust)
 library(randomForest)
 library(varSelRF)
+library(dplyr)
 ```
 
 
@@ -375,7 +376,37 @@ plot(Aldrin.RF.id)
 
 ```{r}
 VIP.Aldrin <- varImpPlot(Aldrin.RF.id, sort = TRUE, 10)
-write.csv(VIP.Aldrin)
+write.csv(VIP.Aldrin, "data/run1.csv")
+```
+
+----Run 153 Random Forest
+```{r}
+most_relevant <- data.frame(row.names = c("comp1", "comp2", "comp3", "comp4",
+                                          "comp5", "comp6" ,"comp7", "comp8",
+                                          "comp9", "comp10"),
+                            stringsAsFactors = TRUE)
+for (i in 1:153){
+  # path <- paste("data/run", as.character(i), ".csv", sep = "") #Crear carpeta "data"
+  Aldrin.id <- Aldrin.i[,-1]
+  Aldrin.RF.id <- randomForest(x = Aldrin.id, y = Aldrin.i[, 1],
+                               ntree = 100, mtry = 100,
+                               importance = TRUE)
+  VIP.Aldrin <- varImpPlot(Aldrin.RF.id, sort = TRUE, 10)
+  
+  df <- data.frame(VIP.Aldrin)
+  df$name <- names(Aldrin.id)
+  df <- arrange(df, desc(MeanDecreaseAccuracy, MeanDecreaseGini)) %>% 
+    select(name)
+  most_relevant[i] <- df[1:10,]
+  # write.csv(df, path)  # guardar cada evaluación.
+}
+```
+
+Contar ocurrencias.
+```{r}
+df_ocurrencias <- data.frame(table(unlist(most_relevant)),
+                             stringsAsFactors = TRUE)
+arrange(df_ocurrencias, desc(Freq))
 ```
 
 ###################################################
