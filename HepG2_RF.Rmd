@@ -379,6 +379,7 @@ VIP.Aldrin <- varImpPlot(Aldrin.RF.id, sort = TRUE, 10)
 write.csv(VIP.Aldrin, "data/run1.csv")
 ```
 
+
 ----Run 153 Random Forest
 ```{r}
 most_relevant <- data.frame(row.names = c("comp1", "comp2", "comp3", "comp4",
@@ -395,10 +396,10 @@ for (i in 1:153){
   
   df <- data.frame(VIP.Aldrin)
   df$name <- names(Aldrin.id)
+  # write.csv(df, path)  # guardar cada evaluación.
   df <- arrange(df, desc(MeanDecreaseAccuracy, MeanDecreaseGini)) %>% 
     select(name)
   most_relevant[i] <- df[1:10,]
-  # write.csv(df, path)  # guardar cada evaluación.
 }
 ```
 
