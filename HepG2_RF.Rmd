@@ -405,9 +405,10 @@ for (i in 1:153){
 
 Contar ocurrencias.
 ```{r}
-df_ocurrencias <- data.frame(table(unlist(most_relevant)),
-                             stringsAsFactors = TRUE)
-arrange(df_ocurrencias, desc(Freq))
+df_ocurrencias <- 
+  data.frame(table(unlist(most_relevant)),
+             stringsAsFactors = TRUE) %>% 
+  arrange(desc(Freq))
 ```
 
 ###################################################
